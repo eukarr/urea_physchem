@@ -15,7 +15,7 @@ my_theme <-  theme_grey() +
   theme(legend.position = "right")
 theme_set(my_theme)
 
-
+# checking the script speed
 tic("start")
 
 # Description------------------------------------------------------------------
@@ -31,7 +31,7 @@ tic("start")
 
 # Functions--------------------------------------------------------------------
 
-# reading a single excel sheet obtained from Varioskan microplate reader
+# reads a single excel sheet obtained from Varioskan microplate reader
 read_sheet <- function(data_file, sheet){
   suppressMessages(
     {
@@ -62,7 +62,7 @@ read_sheet <- function(data_file, sheet){
   return(list(spectra = spectra, exp_type = exp_type, fixed_wl = fixed_wl))
 }
 
-# reading spectral data  from multipage excel file 
+# reads spectral data from multipage excel file 
 # obtained from Varioskan microplate reader
 # returns data frame in long format
 tidy_data <- function(spectra_lst){
@@ -78,7 +78,7 @@ tidy_data <- function(spectra_lst){
   return(data)
 }
 
-# reading samples data from excel file
+# reads samples data from excel file
 # adding samples data to spectral data frame
 # returns data frame in long format
 read_plate <- function(file_name){
@@ -177,13 +177,6 @@ integral <- function(spectrum, wl_range){
 
 
 
-
-
-
-
-
-
-
 # Load data--------------------------------------------------------------------
 
 # example of particles size distribution
@@ -202,47 +195,11 @@ U_CA_3_1_size <- read_delim(file = here("data", "urea_3_1_distribution_clean.txt
 # 1st plate reader experiment, Nov 09, 2022
 # urea-citric acid nanoparticles in water
 # varied: composition, dilution
-# data_file <- here("data", "cnd_vario_Oct22_1.xlsx")
-# 
-# data_sheets <- excel_sheets(path = data_file) %>% 
-#   .[matches("^data_", vars = .)]
-# 
-# samples <- read_excel(path = data_file, 
-#                       sheet = "samples",
-#                       col_names = TRUE)
-# 
-# urea_fluoro <- map(data_sheets, read_sheet, data_file = data_file) %>% 
-#   map(tidy_data) %>%
-#   bind_rows() %>%
-#   left_join(samples, by = "cell")
-
-
-# for compatibility with old script
-urea_fluoro <- read_plate("cnd_vario_Oct22_1.xlsx")
 plate_1 <- read_plate("cnd_vario_Oct22_1.xlsx")
 
 # 2nd plate reader experiment, Nov 14, 2022
 # urea-citric acid nanoparticles in water, Hg
 # varied: composition, dilution, presence of Hg
-
-
-# data_file <- here("data", "cnd_vario_Oct22_2.xlsx")
-# 
-# data_sheets <- excel_sheets(path = data_file) %>% 
-#   .[matches("^data_", vars = .)]
-# 
-# 
-# samples <- read_excel(path = data_file, 
-#                       sheet = "samples",
-#                       col_names = TRUE)
-# 
-# urea_Hg_fluoro <- map(data_sheets, read_sheet, data_file = data_file) %>% 
-#   map(tidy_data) %>%
-#   bind_rows() %>%
-#   left_join(samples, by = "cell")
-
-# for compatibility with old script
-urea_Hg_fluoro <- read_plate("cnd_vario_Oct22_2.xlsx")
 plate_2 <- read_plate("cnd_vario_Oct22_2.xlsx")
 
 # 3rd plate reader experiment, Nov 21, 2022
@@ -277,8 +234,8 @@ plate <- bind_rows(list(plate_1, plate_2, plate_3)) %>%
   ungroup()
 
 # baseline correction and smoothing of absorbance spectra from Ocean Optics
-# parse filename into sample metadata
-# remove spectral ranges containing artifacts
+# parsing filename into sample metadata
+# removing spectral ranges containing artifacts
 ocean_abs <- ocean_abs_raw %>%
   lapply(FUN = bl_correction, wl_range = c(800, 900)) %>%
   lapply(FUN = smooth_runmed, k = 5) %>%
@@ -300,8 +257,8 @@ ocean_abs <- ocean_abs_raw %>%
 
 
 # baseline correction and smoothing of emission spectra from Ocean Optics
-# parse filename into sample metadata
-# remove spectral ranges containing artifacts
+# parsing filename into sample metadata
+# removing spectral ranges containing artifacts
 ocean_fluoro <- ocean_fluoro_raw %>%
   lapply(FUN = bl_correction, wl_range = c(800, 900)) %>%
   lapply(FUN = smooth_runmed, k = 5) %>%
@@ -361,7 +318,7 @@ fig_3a <- ggplot(data = ocean_abs %>%
                 y = absorbance, 
                 color = composition), 
             size = 2) +
-  labs(x = "Wavelength, nm", y = "Absorbance", color = "U:CA") +
+  labs(x = "Wavelength, nm", y = "Absorbance", color = "urea/citric acid") +
   theme(legend.position = c(0.85, 0.7)) +
   scale_color_brewer(palette = "Dark2")
 ggsave(here("plots", "fig_3a.tiff"), plot = fig_3a)  
@@ -372,7 +329,7 @@ fig_3b <- ggplot(data = ocean_abs %>%
                 y = absorbance, 
                 color = composition), 
             size = 2) +
-  labs(x = "Wavelength, nm", y = "Absorbance", color = "T:CA") +
+  labs(x = "Wavelength, nm", y = "Absorbance", color = "thiourea/citric acid") +
   theme(legend.position = c(0.85, 0.7)) +
   scale_color_brewer(palette = "Dark2")
 ggsave(here("plots", "fig_3b.tiff"), plot = fig_3b)
@@ -403,7 +360,7 @@ fig_5a <- ggplot(data = ocean_fluoro %>%
                 y = intensity, 
                 color = composition), 
             size = 2) +
-  labs(x = "Wavelength, nm", y = "Intensity", color = "U:CA") +
+  labs(x = "Wavelength, nm", y = "Intensity", color = "urea/citric acid") +
   theme(legend.position = c(0.85, 0.7)) +
   scale_color_brewer(palette = "Dark2")
 ggsave(here("plots", "fig_5a.tiff"), plot = fig_5a)  
@@ -415,7 +372,7 @@ fig_5b <- ggplot(data = ocean_fluoro %>%
                 y = intensity, 
                 color = composition), 
             size = 2) +
-  labs(x = "Wavelength, nm", y = "Intensity", color = "T:CA") +
+  labs(x = "Wavelength, nm", y = "Intensity", color = "thiourea/citric acid") +
   theme(legend.position = c(0.85, 0.7)) +
   scale_color_brewer(palette = "Dark2")
 ggsave(here("plots", "fig_5b.tiff"), plot = fig_5b)
@@ -557,13 +514,13 @@ detection <- plate %>%
                               levels = c("7_1", "1_1", "1_3", "1_7"),
                               labels = c("7:1", "1:1", "1:3", "1:7")))
 
-fig_10a <- ggplot(data = detection, aes(x = hg_conc, y = rel_intensity, color = composition)) +
+fig_10b <- ggplot(data = detection, aes(x = hg_conc, y = rel_intensity, color = composition)) +
   geom_point(size = 3) +
   geom_smooth(se = F, method = 'loess', size = 2) +
-  scale_x_log10(limits = c(2e-8, 2e-4)) +
-  theme(legend.position = c(0.9, 0.8)) +
-  labs(x = "Hg(II) concentration, mol/L", y = "Relative intensity", color = "U : CA")
-ggsave(here("plots", "fig_10a.tiff"), plot = fig_10a)
+  scale_x_log10(limits = c(2e-8, 5e-4)) +
+  theme(legend.position = c(0.86, 0.8)) +
+  labs(x = "Hg(II) concentration, mol/L", y = "Relative intensity", color = "urea/citric acid")
+ggsave(here("plots", "fig_10b.tiff"), plot = fig_10b)
 
 
 
@@ -584,13 +541,13 @@ detection_u71 <- plate %>%
                               levels = c(360, 440, 540),
                               labels = c("360 / 460", "440 / 550", "540 / 630")))
 
-fig_10b <- ggplot(data = detection_u71, aes(x = hg_conc, y = rel_intensity, color = factor(fixed_wavelength))) +
+fig_10a <- ggplot(data = detection_u71, aes(x = hg_conc, y = rel_intensity, color = factor(fixed_wavelength))) +
   geom_point(size = 3) +
   geom_smooth(se = F, method = 'loess', size = 2) +
   scale_x_log10(limits = c(2e-8, 2e-4)) +
   theme(legend.position = c(0.9, 0.8)) +
   labs(x = "Hg(II) concentration, mol/L", y = "Relative intensity", color = "Ex / Em, nm")
-ggsave(here("plots", "fig_10b.tiff"), plot = fig_10b)
+ggsave(here("plots", "fig_10a.tiff"), plot = fig_10a)
   
 
 # effect of Hg on emission of thiourea:CA samples of selected composition
@@ -623,10 +580,13 @@ ggsave(here("plots", "fig_11.tiff"), plot = fig_11)
 
 
 
-
+# end of checking script speed
 toc()
+
+
 # Play with data---------------------------------------------------------------
 
+# obsolete code and trying new analysis
 
 
 
