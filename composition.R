@@ -67,7 +67,7 @@ read_sheet <- function(data_file, sheet){
 # returns data frame in long format
 tidy_data <- function(spectra_lst){
   data <- spectra_lst$spectra %>% 
-    pivot_longer(cols = !Wavelength,
+    pivot_longer(cols = -c("Wavelength"),
                  names_to = "cell",
                  values_to = "intensity") %>%
     rename(var_wavelength = Wavelength) %>%
