@@ -1,5 +1,5 @@
 # urea_physchem
-This repository contains raw spectral data and analysis script on optical properties of carbon nanoparticles obtained from urea or thiourea and citric acid. The major results of the analysis are collected in a manuscript submitted to [Physchem](https://www.mdpi.com/journal/physchem). The paper link will be added here upon the manuscript acceptance.  
+This repository contains raw spectral data and analysis script on optical properties of carbon nanoparticles obtained from urea or thiourea and citric acid. The major results of the analysis are collected in a manuscript published in [Physchem]([https://www.mdpi.com/journal/physchem](https://www.mdpi.com/2673-7167/3/1/8)).  
 
 ## Files
 * `composition.R` General script used for data import, data processing, and plots generation. The script is self-explanatory, and the clue points are described in the comments
